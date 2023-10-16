@@ -11,10 +11,10 @@ export default function Header() {
     const { userData, setUserData, setCount } = useContext(DataContext);
     const path = usePathname();
     const router = useRouter();
+    let user;
 
-    useEffect(()=>{
-        const user = JSON.parse(localStorage.getItem("user"));
-
+    useEffect(() => {
+        user = JSON.parse(localStorage.getItem("user"));
     })
 
     if (!user) {
