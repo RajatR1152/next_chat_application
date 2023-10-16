@@ -8,10 +8,14 @@ import React, { useContext, useEffect, useState } from 'react'
 
 export default function Header() {
 
-    const user = JSON.parse(localStorage.getItem("user"));
     const { userData, setUserData, setCount } = useContext(DataContext);
     const path = usePathname();
     const router = useRouter();
+
+    useEffect(()=>{
+        const user = JSON.parse(localStorage.getItem("user"));
+
+    })
 
     if (!user) {
         router.push('/login');
