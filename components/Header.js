@@ -8,7 +8,7 @@ import React, { useContext, useEffect, useState } from 'react'
 
 export default function Header() {
 
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(window.localStorage.getItem("user"));
     const { userData, setUserData, setCount } = useContext(DataContext);
     const path = usePathname();
     const router = useRouter();
