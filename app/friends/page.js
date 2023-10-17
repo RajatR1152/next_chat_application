@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { reject } from '../requests/page';
 import { DataContext } from '@/context/DataContext';
 import Spinner from '@/components/Spinner';
+import { useRouter } from 'next/navigation';
 
 export default function page() {
 
@@ -13,6 +14,7 @@ export default function page() {
     const [friendsList, setFriendsList] = useState([]);
     const { isLoading, setIsLoading } = useContext(DataContext);
     const { userData, setUserData, setCount } = useContext(DataContext);
+    const router = useRouter();
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user"));
