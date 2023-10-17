@@ -14,25 +14,30 @@ export default function PostComponent({ data }) {
 
     const [n, setN] = useState(2);
     const [commentInput, setCommentInput] = useState("");
-    const user = JSON.parse(localStorage.getItem("user"));
     const [userData, setUserData] = useState([]);
     const { count, setCount } = useContext(DataContext);
     const router = useRouter();
 
-    if (!user) {
-        router.push('/login');
-    }
-
     useEffect(() => {
-        getUser();
-    }, [])
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            router.push('/login');
+        } else {
+            getUser(user);
+        }
+    }, [router, setCount]);
 
-    async function getUser() {
-        const q = query(collection(db, "users"), where("email", "==", user.email));
-        const respose = await getDocs(q);
-        respose.forEach((doc) => {
-            setUserData(doc.data());
-        })
+    async function getUser(user) {
+        if (user && user.email) {
+            const q = query(collection(db, "users"), where("email", "==", user.email));
+            const response = await getDocs(q);
+            response.forEach((doc) => {
+                setUserData(doc.data());
+            });
+        } else {
+            console.error("Invalid user data");
+            router.push('/login');
+        }
     }
 
     async function comment(i) {

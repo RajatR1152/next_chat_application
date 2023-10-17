@@ -7,16 +7,16 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/app/shared/firebaseConfig';
 
 export default function Header() {
-    const { userData, setUserData, setCount } = useContext(DataContext);
     const path = usePathname();
     const router = useRouter();
+    const { userData, setUserData, setCount } = useContext(DataContext);
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (!user) {
             router.push('/login');
         } else {
-            getUserInfo();
+            getUserInfo(user);
         }
     }, [router, setCount]);
 
@@ -24,8 +24,7 @@ export default function Header() {
         return null;
     }
 
-    async function getUserInfo() {
-        const user = JSON.parse(localStorage.getItem("user"));
+    async function getUserInfo(user) {
         if (user) {
             const q = query(collection(db, "users"), where("email", "==", user?.email));
             const querySnapShot = await getDocs(q);

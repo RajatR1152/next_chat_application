@@ -12,13 +12,6 @@ export default function Feed() {
     const { isLoading, setIsLoading, count } = useContext(DataContext);
     const [posts, setPosts] = useState([]);
 
-    const user = JSON.parse(localStorage.getItem("user"));
-    const router = useRouter();
-
-    if (!user) {
-        router.push('/login');
-    }
-
     useEffect(() => {
         getPosts();
         setIsLoading(false);

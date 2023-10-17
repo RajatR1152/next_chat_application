@@ -4,10 +4,13 @@ import React, { useState } from 'react'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { app, db } from '../shared/firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export default function page() {
 
     const auth = getAuth(app);
+    const router = useRouter();
 
     const [user, setUser] = useState({
         user_uuid: '',
@@ -42,6 +45,11 @@ export default function page() {
         setUser({ ...user, [n]: v });
     }
 
+    const showToast = () => {
+        toast.success('signed up succesfully');
+    };
+
+
     async function submit() {
 
         user.user_uuid = generateUniqueId();
@@ -56,8 +64,8 @@ export default function page() {
                     const errorMessage = error.message;
                 });
 
-            const { user_uuid, username, email, profileImg, requests, password, friends, posts, messages, bio } = user;
-
+                const { user_uuid, username, email, profileImg, requests, password, friends, posts, messages, bio } = user;
+                
             const res = await fetch('https://insta-clone-2aa4f-default-rtdb.firebaseio.com/users.json', {
                 method: "POST",
                 headers: {
@@ -78,21 +86,28 @@ export default function page() {
             });
 
 
-            await setDoc(doc(db, 'users', generateUniqueId()), user).then((res) => {
-                setUser({
-                    user_uuid: '',
-                    username: "",
-                    email: '',
-                    password: '',
-                    cnfPassword: '',
-                    friends: [],
-                    posts: [],
-                    requests: [],
-                    messages: [],
-                    bio: '',
-                    profileImg: 'https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small/Basic_Ui__28186_29.jpg'
-                });
-            })
+            try{
+                await setDoc(doc(db, 'users', generateUniqueId()), user).then((res) => {
+                    setUser({
+                        user_uuid: '',
+                        username: "",
+                        email: '',
+                        password: '',
+                        cnfPassword: '',
+                        friends: [],
+                        posts: [],
+                        requests: [],
+                        messages: [],
+                        bio: '',
+                        profileImg: 'https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small/Basic_Ui__28186_29.jpg'
+                    });
+                    showToast();
+                    router.push('/login');
+                })
+            }
+            catch(err){
+                console.log(err)
+            }
         }
         else {
             document.getElementById('warning').innerText = 'password and confirm password does not match.'

@@ -2,20 +2,15 @@
 import { DataContext } from '@/context/DataContext';
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { AiFillHeart, AiFillHome, AiFillMessage, AiFillPlusSquare, AiFillSetting, AiOutlineBars, AiOutlineSearch, AiOutlineUser } from 'react-icons/ai'
 
 export default function MobileNavs() {
 
   const { isLoading, setIsLoading } = useContext(DataContext);
-  const user = JSON.parse(localStorage.getItem("user"));
   const router = useRouter();
   const path = usePathname();
-
-  if (!user) {
-    router.push('/login');
-  }
-
+  
   if (path == '/login' || path == " /register") {
     return null;
   }

@@ -1,28 +1,30 @@
 'use client'
 import { db } from '@/app/shared/firebaseConfig';
+import { DataContext } from '@/context/DataContext';
 import { collection, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { RxDotFilled } from 'react-icons/rx'
 
 export default function UserInfo({ data }) {
 
     const [userData, setUserData] = useState([]);
     const [searchedData, setSearchedData] = useState([]);
-    let user = JSON.parse(localStorage.getItem("user"));
     const [isFollowing, setIsFollowing] = useState(false);
     const param = useParams();
     const router = useRouter();
-
-    if (!user) {
-        router.push('/login');
-    }
+    const { setCount } = useContext(DataContext);
 
     useEffect(() => {
-        getUserInfo();
-        getSearchedData();
-    }, [])
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            router.push('/login');
+        } else {
+            getUserInfo(user);
+            getSearchedData();
+        }
+    }, [router, setCount]);
 
 
     async function follow() {
@@ -84,14 +86,15 @@ export default function UserInfo({ data }) {
         })
     }
 
-    async function getUserInfo() {
-        setUserData([]);
-        const q = query(collection(db, "users"), where("email", "==", user?.email));
-        const querySnapShot = await getDocs(q);
-        querySnapShot.forEach((doc) => {
-            setUserData(userData => [...userData, doc.data()])
-        });
+    async function getUserInfo(user) {
+        // const q = query(collection(db, "users"), where("email", "==", user?.email));
+        // const querySnapShot = await getDocs(q);
+        // querySnapShot.forEach((doc) => {
+        //     setUserData(userData => [...userData, doc.data()])
+        // });
+        console.log(user)
     }
+    
     async function getSearchedData() {
         const q = query(collection(db, "users"), where("user_uuid", "==", param.user[0]));
         const querySnapShot = await getDocs(q);

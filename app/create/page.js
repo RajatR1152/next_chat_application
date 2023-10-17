@@ -1,32 +1,43 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { BsCloudUpload } from 'react-icons/bs'
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { collection, doc, getDocs, getFirestore, query, setDoc, where } from 'firebase/firestore'
 import { app } from '../shared/firebaseConfig';
 import Spinner from '@/components/Spinner';
 import { toast } from 'react-toastify';
+import { DataContext } from '@/context/DataContext';
+import { useRouter } from 'next/navigation';
 
 
 export default function page() {
 
     const [userData, setUserData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const { setCount } = useContext(DataContext);
+    const router = useRouter();
 
     useEffect(() => {
-        getUserInfo();
-    }, [])
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            router.push('/login');
+        } else {
+            getUser(user);
+        }
+    }, [router, setCount]);
 
-    const showToast = () => {
-        toast.success('post created succesfully');
-    };
-
-    async function getUserInfo() {
-        const q = query(collection(db, "users"), where("email", "==", user?.email));
-        const querySnapShot = await getDocs(q);
-        querySnapShot.forEach((doc) => {
-            setUserData(doc.data());
-        })
+    async function getUser(user) {
+        if (user && user.email) {
+            const q = query(collection(db, "users"), where("email", "==", user.email));
+            const response = await getDocs(q);
+            response.forEach((doc) => {
+                setUserData(doc.data());
+            });
+        }
+        else {
+            console.error("Invalid user data");
+            router.push('/login');
+        }
     }
 
     const db = getFirestore(app);
@@ -91,7 +102,10 @@ export default function page() {
                     author_id: userData?.user_uuid,
                 }
 
-
+                const showToast = () => {
+                    toast.success('post created succesfully');
+                };
+            
                 await setDoc(doc(db, 'posts', postId), postData).then((res) => {
                     console.log('saved');
                     setLoading(false);

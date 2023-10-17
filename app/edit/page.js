@@ -6,12 +6,13 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { toast } from 'react-toastify';
 import Spinner from '@/components/Spinner';
 import { DataContext } from '@/context/DataContext';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
-    const user = JSON.parse(localStorage.getItem("user"));
     const [userData, setUserData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const {count,setCount} = useContext(DataContext);
+    const { count, setCount } = useContext(DataContext);
+    const router = useRouter();
     const [profileData, setProfileData] = useState({
         username: '',
         profileImg: '',
@@ -22,13 +23,20 @@ export default function Page() {
         country: '',
         dob: '',
     });
+
     const storage = getStorage(app);
 
     useEffect(() => {
-        getUserInfo();
-    }, [count]);
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            router.push('/login');
+        } else {
+            getUserInfo(user);
+        }
 
-    async function getUserInfo() {
+    }, [router, setCount]);
+
+    async function getUserInfo(user) {
         try {
             const q = query(collection(db, 'users'), where("email", "==", user?.email));
             const response = await getDocs(q);
@@ -74,7 +82,7 @@ export default function Page() {
             await uploadBytes(storageRef, profileData.profileImg);
             const imageUrl = await getDownloadURL(storageRef);
 
-            const q = query(collection(db, "users"), where("email", "==", user.email))
+            const q = query(collection(db, "users"), where("email", "==", userData.email))
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach(async (doc) => {
                 await updateDoc(doc.ref, {
@@ -85,7 +93,7 @@ export default function Page() {
             });
 
             showToast();
-            setCount(count+1);
+            setCount(count + 1);
 
             console.log("Profile data updated successfully!");
         } catch (error) {

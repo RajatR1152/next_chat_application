@@ -11,19 +11,22 @@ import UserPosts from '@/components/UserPosts';
 
 export default function page() {
 
-    const user = JSON.parse(localStorage.getItem("user"));
     const [userData, setUserData] = useState([]);
     const [showPosts, setShowPosts] = useState(true);
     const router = useRouter();
     const { isLoading, setIsLoading } = useContext(DataContext);
-
+    const { setCount } = useContext(DataContext);
 
     useEffect(() => {
-        getUserInfo();
-    }, [])
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            router.push('/login');
+        } else {
+            getUserInfo(user);
+        }
+    }, [router, setCount]);
 
-
-    async function getUserInfo() {
+    async function getUserInfo(user) {
         const q = query(collection(db, 'users'), where('email', "==", user?.email));
         const response = await getDocs(q);
         response.forEach(element => {

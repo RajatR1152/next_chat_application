@@ -5,36 +5,39 @@ import { db } from '../shared/firebaseConfig';
 import Link from 'next/link';
 import { DataContext } from '@/context/DataContext';
 import Spinner from '@/components/Spinner';
+import { useRouter } from 'next/navigation';
 
 export default function page() {
 
     const [user, setUser] = useState([]);
     const [userData, setUserData] = useState([]);
     const [requests, setRequests] = useState([]);
-    const { isLoading, setIsLoading } = useContext(DataContext);
+    const { isLoading, setIsLoading ,count,setCount} = useContext(DataContext);
+    const router = useRouter();
 
     useEffect(() => {
         let data = localStorage.getItem("user");
-        setUser(JSON.parse(data))
-    }, [])
+        setUser(JSON.parse(data));
+        getUserInfo(user);
+    }, [count])
+
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            router.push('/login');
+
+        } else {
+            getUserInfo(user);
+        }
+    }, [router, setCount]);
 
     if (!user) {
         router.push('/login');
     }
 
-    useEffect(() => {
-        const data = JSON.parse(localStorage.getItem("user"));
-        setUser(data.providerData[0]);
-    }, []);
-
-    useEffect(() => {
-        if (user && user.uid) {
-            getUserInfo();
-        }
-    }, [user, accept, reject]);
-
-    async function getUserInfo() {
-        const q = query(collection(db, 'users'), where("email", "==", user.uid));
+    async function getUserInfo(user) {
+        const q = query(collection(db, 'users'), where("email", "==", user?.email));
         const querySnapShot = await getDocs(q);
         querySnapShot.forEach((element) => {
             setUserData(element.data());
@@ -51,13 +54,13 @@ export default function page() {
             user_uuid: r.user_uuid
         }
 
-        const q = query(collection(db, 'users'), where("email", "==", user.uid));
+        const q = query(collection(db, 'users'), where("email", "==", user?.email));
         const querySnapShot = await getDocs(q);
 
         querySnapShot.forEach(async (doc) => {
             const userRef = doc.ref;
             const user = doc.data();
-            const updatedReqs = user.requests.filter(d => d.username !== r.username);
+            const updatedReqs = user.requests.filter(d => d.username !== r?.username);
             const updatedFriends = [...user?.friends, frData];
 
             try {
@@ -68,9 +71,11 @@ export default function page() {
             } catch (error) {
                 console.error("Error adding friend: ", error);
             }
+            
+            setCount(count+1);
         });
 
-        const q2 = query(collection(db, 'users'), where("email", "==", r.email));
+        const q2 = query(collection(db, 'users'), where("email", "==", r?.email));
         const querySnapShot2 = await getDocs(q2);
 
         const frData2 = {
@@ -95,16 +100,17 @@ export default function page() {
     }
 
     async function reject(r) {
-        const q = query(collection(db, "users"), where('email', "==", useda.email));
+        const q = query(collection(db, "users"), where('email', "==", user?.email));
         const response = await getDocs(q);
         response.forEach(async (doc) => {
             const userRef = doc.ref;
             const user = doc.data();
-            const updatedReqs = user.requests.filter(d => d.username !== r.username);
+            const updatedReqs = user.requests.filter(d => d.username !== r?.username);
             try {
                 await updateDoc(userRef, {
                     requests: updatedReqs,
                 });
+                setCount(count+1);
             } catch (error) {
                 console.error("Error adding friend: ", error);
             }

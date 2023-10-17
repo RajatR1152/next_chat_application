@@ -3,22 +3,28 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react'
 import { db } from '../shared/firebaseConfig';
 import Link from 'next/link';
-import { reject } from '../requests/page';
 import { DataContext } from '@/context/DataContext';
 import Spinner from '@/components/Spinner';
+import { useRouter } from 'next/navigation';
 
 export default function page() {
 
-    const user = JSON.parse(localStorage.getItem("user"));
     const [userInfo, setUserInfo] = useState([]);
     const [friendsList, setFriendsList] = useState([]);
     const { isLoading, setIsLoading } = useContext(DataContext);
+    const { userData, setUserData, setCount } = useContext(DataContext);
+    const router = useRouter();
 
     useEffect(() => {
-        getUserInfo();
-    }, [])
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            router.push('/login');
+        } else {
+            getUserInfo(user);
+        }
+    }, [router, setCount]);
 
-    async function getUserInfo() {
+    async function getUserInfo(user) {
         const q = query(collection(db, "users"), where("email", "==", user.email));
         const querySnapShot = await getDocs(q);
         let fArray = [];

@@ -1,21 +1,24 @@
 'use client'
 import Feed from "@/components/Feed";
+import { DataContext } from "@/context/DataContext";
 import { useRouter } from "next/navigation";
+import { useContext, useEffect } from "react";
 
 export default function page() {
 
-  const user = JSON.parse(localStorage.getItem("user"));
   const router = useRouter();
+  const { userData, setUserData, setCount } = useContext(DataContext);
 
-  if (!user) {
-    router.push('/login');
-  }
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      router.push('/login');
+    }
+  }, [router, setCount]);
 
-  else {
-    return (
-      <div className="container w-full h-full">
-        <Feed />
-      </div>
-    )
-  }
+  return (
+    <div className="container w-full h-full">
+      <Feed />
+    </div>
+  )
 }

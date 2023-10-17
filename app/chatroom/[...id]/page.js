@@ -4,24 +4,31 @@ import Spinner from '@/components/Spinner';
 import { DataContext } from '@/context/DataContext';
 import { collection, doc, getDocs, query, where } from 'firebase/firestore';
 import Link from 'next/link';
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import React, { useContext, useEffect, useState } from 'react'
 import { BiPaperPlane } from 'react-icons/bi';
 
 export default function page() {
 
     const param = useParams();
-    const user = JSON.parse(localStorage.getItem("user"));
     const [userData, setUserData] = useState([]);
     const [recieversData, setRecieversData] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [messagesList, setMessagesList] = useState([]);
     const { count, setCount } = useContext(DataContext);
     const { isLoading, setIsLoading } = useContext(DataContext);
-
+    const router = useRouter();
 
     useEffect(() => {
-        getUserInfo();
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            router.push('/login');
+        } else {
+            getUserInfo(user);
+        }
+    }, []);
+
+    useEffect(() => {
         getRecieversData();
         getMessages();
     }, [count])
@@ -30,17 +37,14 @@ export default function page() {
         getMessages();
     }, [send])
 
-
-
-    async function getUserInfo() {
+    async function getUserInfo(user) {
+        console.log("user",user)
         const q = query(collection(db, "users"), where("email", "==", user?.email));
         const response = await getDocs(q);
         response.forEach((doc) => {
             setUserData(data => [...data, doc.data()]);
         });
-        if (userData) {
-            setIsLoading(false);
-        }
+        setIsLoading(false);
     }
 
     async function getRecieversData() {
@@ -105,7 +109,6 @@ export default function page() {
 
                 setMessagesList(filteredMessages);
                 setCount(count + 1);
-                console.log(messagesList);
             } else {
                 console.error('Error fetching data');
             }

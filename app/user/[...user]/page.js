@@ -17,7 +17,6 @@ export default function page() {
   const [showPosts, setShowPosts] = useState(true);
   const { isLoading, setIsLoading } = useContext(DataContext);
 
-
   useEffect(() => {
     getUserInfo();
   }, []);
