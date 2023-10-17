@@ -15,11 +15,10 @@ export default function Header() {
 
     useEffect(() => {
         user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            router.push('/login');
+        }
     })
-
-    if (!user) {
-        router.push('/login');
-    }
 
     if (path === '/login' || path === '/register') {
         return null;
