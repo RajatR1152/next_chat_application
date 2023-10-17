@@ -3,7 +3,6 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react'
 import { db } from '../shared/firebaseConfig';
 import Link from 'next/link';
-import { reject } from '../requests/page';
 import { DataContext } from '@/context/DataContext';
 import Spinner from '@/components/Spinner';
 import { useRouter } from 'next/navigation';
