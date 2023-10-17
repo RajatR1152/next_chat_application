@@ -1,20 +1,15 @@
 'use client'
 import { DataContext } from '@/context/DataContext';
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation';
-import React, { use, useContext, useEffect } from 'react'
+import { usePathname } from 'next/navigation';
+import React, { useContext } from 'react'
 import { AiFillHeart, AiFillHome, AiFillMessage, AiFillPlusSquare, AiFillSetting, AiOutlineBars, AiOutlineSearch, AiOutlineUser } from 'react-icons/ai'
 
 export default function SideBar() {
     const path = usePathname();
     const { count, setIsLoading } = useContext(DataContext);
     let messageCount;
-    const user = JSON.parse(localStorage.getItem("user"));
-    const router = useRouter();
 
-    if (!user) {
-        router.push('/login');
-    }
 
     if (path === '/login' || path === '/register') {
         return null;

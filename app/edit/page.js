@@ -62,7 +62,6 @@ export default function Page() {
             ...prevData,
             profileImg: file
         }));
-      setCount(count+1);
     }
 
     const showToast = () => {

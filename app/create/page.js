@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 
 export default function page() {
 
-    const user = JSON.parse(localStorage.getItem('user'));
     const [userData, setUserData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -106,7 +105,6 @@ export default function page() {
                     showToast();
                 })
 
-                // ---------------------
 
                 const { caption, location, post_uid, link, image, author, authorImg, email, id, likes, comments, author_id } = postData;
                 const res = await fetch('https://insta-clone-2aa4f-default-rtdb.firebaseio.com/posts.json', {
@@ -129,7 +127,6 @@ export default function page() {
                         comments
                     })
                 });
-
             })
         })
     }

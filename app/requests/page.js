@@ -13,6 +13,14 @@ export default function page() {
     const [requests, setRequests] = useState([]);
     const { isLoading, setIsLoading } = useContext(DataContext);
 
+    useEffect(() => {
+        let data = localStorage.getItem("user");
+        setUser(JSON.parse(data))
+    }, [])
+
+    if (!user) {
+        router.push('/login');
+    }
 
     useEffect(() => {
         const data = JSON.parse(localStorage.getItem("user"));

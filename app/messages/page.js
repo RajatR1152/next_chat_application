@@ -14,8 +14,6 @@ export default function page() {
     const [friendsList, setFriendsList] = useState([]);
     const { isLoading, setIsLoading } = useContext(DataContext);
 
-
-
     useEffect(() => {
         getUserInfo();
     }, [])

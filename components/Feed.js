@@ -21,6 +21,7 @@ export default function Feed() {
 
     useEffect(() => {
         getPosts();
+        setIsLoading(false);
     }, [count])
 
     async function getPosts() {
