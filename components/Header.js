@@ -31,7 +31,7 @@ export default function Header() {
             const querySnapShot = await getDocs(q);
             querySnapShot.forEach((doc) => {
                 setUserData(doc?.data());
-                console.log("data",doc.data())
+                console.log("data", doc.data())
                 localStorage.setItem("count", doc.data()?.messages);
             });
         }
@@ -40,7 +40,11 @@ export default function Header() {
     return (
         <div className="container w-full items-center gap-5 p-2 flex flex-row border-b-2 border-white">
             <Link href={'/'} className='text-2xl md:text-3xl font-bold'>N E X T A G R A M</Link>
-            <Link href={'/profile'} className='w-fit me-3 ms-auto'><img className='w-12 h-12 rounded-full' src={userData?.profileImg} alt={userData.username} /></Link>
+            {
+                userData?.profileImg ? <Link href={'/profile'} className='w-fit me-3 ms-auto'><img className='w-12 h-12 rounded-full' src={userData?.profileImg} alt={userData.username} /></Link>
+                    :
+                    null
+            }
         </div>
     );
 }
