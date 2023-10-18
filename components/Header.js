@@ -31,7 +31,6 @@ export default function Header() {
             const querySnapShot = await getDocs(q);
             querySnapShot.forEach((doc) => {
                 setUserData(doc?.data());
-                console.log("data", doc.data())
                 localStorage.setItem("count", doc.data()?.messages);
             });
         }

@@ -12,7 +12,7 @@ import Spinner from './Spinner'
 
 export default function PostComponent({ data }) {
 
-    const [n, setN] = useState(2);
+    const [n, setN] = useState(3);
     const [commentInput, setCommentInput] = useState("");
     const [userData, setUserData] = useState([]);
     const { count, setCount } = useContext(DataContext);
