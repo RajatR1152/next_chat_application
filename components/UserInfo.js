@@ -87,14 +87,13 @@ export default function UserInfo({ data }) {
     }
 
     async function getUserInfo(user) {
-        // const q = query(collection(db, "users"), where("email", "==", user?.email));
-        // const querySnapShot = await getDocs(q);
-        // querySnapShot.forEach((doc) => {
-        //     setUserData(userData => [...userData, doc.data()])
-        // });
-        console.log(user)
+        const q = query(collection(db, "users"), where("email", "==", user?.email));
+        const querySnapShot = await getDocs(q);
+        querySnapShot.forEach((doc) => {
+            setUserData(userData => [...userData, doc.data()])
+        });
     }
-    
+
     async function getSearchedData() {
         const q = query(collection(db, "users"), where("user_uuid", "==", param.user[0]));
         const querySnapShot = await getDocs(q);
